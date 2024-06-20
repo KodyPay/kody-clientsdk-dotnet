@@ -12,7 +12,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="kody-net8-sdk" Version="x" />
+      <PackageReference Include="kody-dotnet8-client" Version="240620.x" />
       <None Include="README.md" Pack="true" PackagePath="\"/>
     </ItemGroup>
 
