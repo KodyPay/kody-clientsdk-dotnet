@@ -14,7 +14,7 @@ jobs:
         run: |
           git clone https://github.com/KodyPay/kp-protocols-clientsdk.git proto-repo
 
-      - name: Setup dotnet build
+      - name: Setup dotnet
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0.x'
@@ -68,7 +68,7 @@ jobs:
         run: |
           git clone https://github.com/KodyPay/kp-protocols-clientsdk.git proto-repo
 
-      - name: Setup dotnet build
+      - name: Setup dotnet
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0.x'
@@ -82,7 +82,7 @@ jobs:
         run: dotnet pack --configuration Release -p:PackageVersion=${{ needs.tagging.outputs.tag }} net8
 
       - name: Publish dotnet package to GPR
-        run: dotnet nuget push --api-key ${{ secrets.GITHUB_TOKEN }} net8\bin\Release\kody-dotnet8-client.*.nupkg --source "github"
+        run: dotnet nuget push --api-key ${{ secrets.GITHUB_TOKEN }} net8\bin\Release\kody-dotnet8-client.*.nupkg
 
   release:
     needs:
