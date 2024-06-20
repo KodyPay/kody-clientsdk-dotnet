@@ -15,13 +15,13 @@ jobs:
           dotnet-version: '8.0.x'
           cache: true
           source-url: https://nuget.pkg.github.com/KodyPay/index.json
-          cache-dependency-path: dotnet\packages.lock.json
+          cache-dependency-path: net8\packages.lock.json
         env:
           NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build dotnet project
         run: |
-          dotnet build dotnet
+          dotnet build net8 --configuration Release 
 
   tagging:
     runs-on: ubuntu-latest
@@ -64,15 +64,15 @@ jobs:
           dotnet-version: '8.0.x'
           cache: true
           source-url: https://nuget.pkg.github.com/KodyPay/index.json
-          cache-dependency-path: dotnet\packages.lock.json
+          cache-dependency-path: net8\packages.lock.json
         env:
           NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create dotnet package
-        run: dotnet pack --configuration Release -p:PackageVersion=${{ needs.tagging.outputs.tag }} dotnet
+        run: dotnet pack --configuration Release -p:PackageVersion=${{ needs.tagging.outputs.tag }} net8
 
       - name: Publish dotnet package to GPR
-        run: dotnet nuget push --api-key ${{ secrets.GITHUB_TOKEN }} dotnet\bin\Release\kody-dotnet8-client.*.nupkg --source "github"
+        run: dotnet nuget push --api-key ${{ secrets.GITHUB_TOKEN }} net8\bin\Release\kody-dotnet8-client.*.nupkg --source "github"
 
   release:
     needs:
