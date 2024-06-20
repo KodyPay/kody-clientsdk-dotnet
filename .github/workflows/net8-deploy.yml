@@ -1,0 +1,96 @@
+name: .NET8 Build and Release
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup dotnet build
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+          cache: true
+          source-url: https://nuget.pkg.github.com/KodyPay/index.json
+          cache-dependency-path: dotnet\packages.lock.json
+        env:
+          NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build dotnet project
+        run: |
+          dotnet build dotnet
+
+  tagging:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+    steps:
+      - name: Create tag
+        id: tag
+        run: |
+          DATE_TAG=$(date +'%y%m%d.%H%M')
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            TAG="$DATE_TAG"
+          else
+            TAG="$DATE_TAG-dev"
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+  tagging-echo:
+    needs:
+      - tagging
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show tag
+        run: |
+          echo "Tag: ${{ needs.tagging.outputs.tag }}"
+
+  publish:
+    needs:
+      - build
+      - tagging
+    permissions:
+      packages: write
+      contents: write
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup dotnet build
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+          cache: true
+          source-url: https://nuget.pkg.github.com/KodyPay/index.json
+          cache-dependency-path: dotnet\packages.lock.json
+        env:
+          NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create dotnet package
+        run: dotnet pack --configuration Release -p:PackageVersion=${{ needs.tagging.outputs.tag }} dotnet
+
+      - name: Publish dotnet package to GPR
+        run: dotnet nuget push --api-key ${{ secrets.GITHUB_TOKEN }} dotnet\bin\Release\kody-dotnet8-client.*.nupkg --source "github"
+
+  release:
+    needs:
+      - publish
+      - tagging
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1.14.0
+        with:
+          name: ${{ needs.tagging.outputs.tag }}
+          tag: ${{ needs.tagging.outputs.tag }}
+          body: |
+            ${{ github.event.release.body }}
+            Package available on https://nuget.pkg.github.com/KodyPay/
+          draft: false
+          prerelease: ${{ github.ref != 'refs/heads/main' }}
+          makeLatest: ${{ github.ref == 'refs/heads/main' }}
