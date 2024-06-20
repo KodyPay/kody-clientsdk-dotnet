@@ -5,29 +5,6 @@ on:
       - main
 
 jobs:
-  build:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Checkout proto repository
-        run: |
-          git clone https://github.com/KodyPay/kp-protocols-clientsdk.git proto-repo
-
-      - name: Setup dotnet
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '8.0.x'
-          cache: true
-          source-url: https://nuget.pkg.github.com/KodyPay/index.json
-          cache-dependency-path: net8\packages.lock.json
-        env:
-          NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build dotnet project
-        run: |
-          dotnet build net8 --configuration Release 
-
   tagging:
     runs-on: ubuntu-latest
     outputs:
@@ -55,7 +32,6 @@ jobs:
 
   publish:
     needs:
-      - build
       - tagging
     permissions:
       packages: write
