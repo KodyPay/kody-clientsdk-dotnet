@@ -1,6 +1,10 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotnet-payment-example", "dotnet-payment-example.csproj", "{3974DA3C-90D8-42D8-BF00-51EDBF89FA2D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ListTerminals", "ListTerminals\ListTerminals.csproj", "{6F8D00CD-D0C9-4E3E-AEF2-F81AFBBCEB17}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commons", "Commons\Commons.csproj", "{74099C34-5B99-4FEA-955B-6DC0CDD0226D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TerminalPayment", "TerminalPayment\TerminalPayment.csproj", "{0C6FAC73-F4A1-422D-AE22-A69F79AA0768}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -9,8 +13,19 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{3974DA3C-90D8-42D8-BF00-51EDBF89FA2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3974DA3C-90D8-42D8-BF00-51EDBF89FA2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3974DA3C-90D8-42D8-BF00-51EDBF89FA2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3974DA3C-90D8-42D8-BF00-51EDBF89FA2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F8D00CD-D0C9-4E3E-AEF2-F81AFBBCEB17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F8D00CD-D0C9-4E3E-AEF2-F81AFBBCEB17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F8D00CD-D0C9-4E3E-AEF2-F81AFBBCEB17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F8D00CD-D0C9-4E3E-AEF2-F81AFBBCEB17}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74099C34-5B99-4FEA-955B-6DC0CDD0226D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74099C34-5B99-4FEA-955B-6DC0CDD0226D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74099C34-5B99-4FEA-955B-6DC0CDD0226D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74099C34-5B99-4FEA-955B-6DC0CDD0226D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C6FAC73-F4A1-422D-AE22-A69F79AA0768}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C6FAC73-F4A1-422D-AE22-A69F79AA0768}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C6FAC73-F4A1-422D-AE22-A69F79AA0768}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C6FAC73-F4A1-422D-AE22-A69F79AA0768}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

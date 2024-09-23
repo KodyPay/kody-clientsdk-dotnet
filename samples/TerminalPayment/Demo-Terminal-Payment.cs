@@ -1,42 +1,62 @@
 ﻿using System.Diagnostics;
 using System.Text.Json;
 using Com.Kodypay.Grpc.Pay.V1;
-using kp_bamboo_dotnet;
+using CommandLine;
+using KodyCommons;
 
 namespace kody_dotnet_samples;
 
-public record KodySettings(string Address, string StoreId, string ApiKey);
+
 
 public class ExamplePayment
 {
-    public static void Main()
+    public class PaymentOptions
+    {
+        [Option('t', "terminalId", Required = true, HelpText = "Terminal ID")]
+        public string TerminalId { get; set; }
+
+        [Option('a', "amount", Default = "1.00", HelpText = "Amount to charge")]
+        public string Amount { get; set; }
+
+        [Option('s', "showTips", Required = false, Default = false, HelpText = "Show tips")]
+        public bool ShowTips { get; set; }
+    }
+    
+    public static void Main(string[] args)
     {
         // setup the configuration needed by the client
-        var settings = JsonSerializer.Deserialize<ExampleSettings> (File.ReadAllText("../../../appsettings.json"));
+        var settings = Utils.LoadSettings("appsettings.json");
         Debug.Assert(settings != null, $"{nameof(settings)} != null");
 
-        var example = new Example(settings)
-        {
-            _terminalId = "S1F2-000158213604086"
-        };
-        example.Pay();
-        example.Details();
+        Parser.Default.ParseArguments<PaymentOptions>(args)
+            .WithParsed<PaymentOptions>(opts =>
+            {
+                var example = new ExamplePayment(settings, opts);
+                example.Pay();
+                example.Details();
+            })
+            .WithNotParsed<PaymentOptions>((errs) => HandleParseError(errs));
     }
 
     private readonly KodyPayTerminalClient _client;
 
     // sample data
-    private readonly decimal _amount = Convert.ToDecimal("1.00");
-    private string _terminalId = "";
+    private decimal _amount;
+    private string _terminalId;
     private string _currentOrderId = "";
+    private bool _showTips = false;
 
-    private Example(ExampleSettings settings)
+    private ExamplePayment(KodySettings settings, PaymentOptions opts)
     {
         // the API Key and Store will be given to you when you start developing the integration.
         var store = Guid.Parse(settings.StoreId);
         var address = new Uri(settings.Address);
         // the client can be created once and reused
         _client = new KodyPayTerminalClient(address, store, settings.ApiKey);
+        
+        _terminalId = opts.TerminalId;
+        _amount = Convert.ToDecimal(opts.Amount);
+        _showTips = opts.ShowTips;
     }
 
     private void Pay()
@@ -49,24 +69,23 @@ public class ExamplePayment
         var payment = Task.Run(async () =>
             // the SendPayment function expects 2 or 3 arguments:
             await _client.SendPayment(
-                // the amount to pay, specified as a decimal
-                amount: _amount,
                 // the terminal ID, retrieved by the GetTerminals function (above)
-                // in this example it is assumed that there is at least one terminal, the first is selected
+                // the amount to pay, specified as a decimal
                 terminalId: _terminalId,
-
+                amount: _amount,
+                showTips: _showTips,
                 // this argument is an optional callback to save the order ID locally to be used by the CancelPayment function
                 orderIdCallback: orderId =>
                 {
                     var timestamp2 = DateTime.UtcNow.ToString("u");
                     Console.WriteLine($"[{timestamp2}] Processing payment with ID: {orderId}");
                     _currentOrderId = orderId;
-                    // Console.WriteLine("Sleeping...");
-                    // Thread.Sleep(TimeSpan.FromSeconds(10));
-                    // Cancel();
-                }
-            )
+                    // By default the payment cancels in 2 minutes. if you want a shorter timeout, you need to cancel the payment yourself
+                    Utils.StartCountdown("Waiting {0} seconds for payment...", 30);
+                    Cancel();
+                })
         ).Result;
+        
         // the payment result object includes the following properties:
         // payment.Status        // (Pending, Success, Cancelled, Failed)
         // payment.OrderId       // internal 'order' ID generated for the payment
@@ -119,5 +138,11 @@ public class ExamplePayment
         // payment.FailureReason // reason for failure, only populated when status is Cancelled or Failed
         // payment.ExtPaymentRef // external payment reference, PSP reference
         // payment.ReceiptJson   // JSON object containing the receipt data
+    }
+    
+    public static void HandleParseError(IEnumerable<Error> errs)
+    {
+        // Handle command line parsing errors
+        Console.WriteLine("Error parsing arguments.");
     }
 }

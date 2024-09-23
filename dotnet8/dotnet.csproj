@@ -11,6 +11,7 @@
         <Company>KodyPay</Company>
         <PackageDescription>Kody .NET8 gRPC Client</PackageDescription>
         <RepositoryUrl>https://github.com/KodyPay/kody-clientsdk-dotnet</RepositoryUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
     </PropertyGroup>
 
     <ItemGroup>
