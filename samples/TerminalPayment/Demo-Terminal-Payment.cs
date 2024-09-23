@@ -13,10 +13,10 @@ public class ExamplePayment
     public class PaymentOptions
     {
         [Option('t', "terminalId", Required = true, HelpText = "Terminal ID")]
-        public string TerminalId { get; set; }
+        public required string TerminalId { get; set; }
 
         [Option('a', "amount", Default = "1.00", HelpText = "Amount to charge")]
-        public string Amount { get; set; }
+        public required string Amount { get; set; }
 
         [Option('s', "showTips", Required = false, Default = false, HelpText = "Show tips")]
         public bool ShowTips { get; set; }
@@ -41,10 +41,10 @@ public class ExamplePayment
     private readonly KodyPayTerminalClient _client;
 
     // sample data
-    private decimal _amount;
-    private string _terminalId;
+    private readonly decimal _amount;
+    private readonly string _terminalId;
     private string _currentOrderId = "";
-    private bool _showTips = false;
+    private readonly bool _showTips = false;
 
     private ExamplePayment(KodySettings settings, PaymentOptions opts)
     {
@@ -62,7 +62,7 @@ public class ExamplePayment
     private void Pay()
     {
         var timestamp = DateTime.UtcNow.ToString("u");
-        Console.WriteLine($"[{timestamp}] Sending payment for amount: {_amount} to terminal: {_terminalId}");
+        Console.WriteLine($"[{timestamp}] Sending payment for amount: {_amount} (tips enabled: {_showTips}) to terminal: {_terminalId}");
         _currentOrderId = "";
 
         // this function can be used to send a payment:
@@ -139,8 +139,8 @@ public class ExamplePayment
         // payment.ExtPaymentRef // external payment reference, PSP reference
         // payment.ReceiptJson   // JSON object containing the receipt data
     }
-    
-    public static void HandleParseError(IEnumerable<Error> errs)
+
+    private static void HandleParseError(IEnumerable<Error> errs)
     {
         // Handle command line parsing errors
         Console.WriteLine("Error parsing arguments.");

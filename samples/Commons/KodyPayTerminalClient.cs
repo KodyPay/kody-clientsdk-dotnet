@@ -34,7 +34,7 @@ public class KodyPayTerminalClient
     /// <returns>A task that represents the asynchronous operation. The task result contains the payment response object.</returns>
     public async Task<PayResponse> SendPayment(string terminalId, decimal amount, bool showTips = false, Action<string>? orderIdCallback = null)
     {
-        var req = new PayRequest { StoreId = _store, Amount = amount.ToString("F2"), TerminalId = terminalId };
+        var req = new PayRequest { StoreId = _store, Amount = amount.ToString("F2"), TerminalId = terminalId, ShowTips = showTips };
         using var pay = _client.Pay(req, deadline: DeadLine(), headers: ApiKey());
         var response = new PayResponse { Status = PaymentStatus.Pending };
         await foreach(var reply in pay.ResponseStream.ReadAllAsync())
