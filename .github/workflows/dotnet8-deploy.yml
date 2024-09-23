@@ -65,9 +65,10 @@ jobs:
           NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create dotnet package
-        run: dotnet pack --configuration Release -p:PackageVersion=${{ needs.tagging.outputs.tag }} dotnet8
+        run: dotnet pack --configuration Release -p:PackageVersion=${{ needs.tagging.outputs.version }} dotnet8
 
       - name: Publish to NuGet
+        if: ${{ needs.tagging.outputs.prerelease == 'false' }}
         run: dotnet nuget push --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json dotnet8\bin\Release\kody-dotnet8-client.*.nupkg
         # TODO: Sign package
 
