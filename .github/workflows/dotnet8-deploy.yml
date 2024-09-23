@@ -1,26 +1,35 @@
 name: .NET8 Build and Release
 on:
-  push:
-    branches:
-      - main
+  repository_dispatch:
+    types: [tag-push]
   workflow_dispatch:
+    inputs:
+      tag:
+        description: 'source tag'
+        required: true
+        type: string
 
 jobs:
   tagging:
     runs-on: ubuntu-latest
     outputs:
-      tag: ${{ steps.tag.outputs.tag }}
+      tag: ${{ steps.set_tag.outputs.tag }}
+      version: ${{ steps.set_tag.outputs.version }}
+      prerelease: ${{ steps.set_tag.outputs.prerelease }}
     steps:
-      - name: Create tag
-        id: tag
+      - name: Use the tag from the event
+        id: set_tag
         run: |
-          DATE_TAG=$(date +'%y%m%d.%H%M')
-          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
-            TAG="$DATE_TAG"
-          else
-            TAG="$DATE_TAG-dev"
+          TAG="${{ inputs.tag || github.event.client_payload.tag }}"
+          VERSION=${TAG#v}
+          echo "TAG from event: ${TAG}"
+          echo "tag=${TAG}" >> $GITHUB_OUTPUT
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          if [[ "${TAG}" == *-* ]]; then 
+            echo "prerelease=true" >> $GITHUB_OUTPUT
+          else 
+            echo "prerelease=false" >> $GITHUB_OUTPUT
           fi
-          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
 
   tagging-echo:
     needs:
@@ -60,6 +69,7 @@ jobs:
 
       - name: Publish to NuGet
         run: dotnet nuget push --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json dotnet8\bin\Release\kody-dotnet8-client.*.nupkg
+        # TODO: Sign package
 
   release:
     needs:

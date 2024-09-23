@@ -2,9 +2,9 @@
 using Grpc.Core;
 using Grpc.Net.Client;
 
-namespace kody_dotnet_samples;
+namespace KodyCommons;
 
-public class KodyTerminalClient
+public class KodyPayTerminalClient
 {
     private const double RequestTimeoutMins = 3D; // 3 minute request timeout
     private readonly string _store;
@@ -27,11 +27,12 @@ public class KodyTerminalClient
     /// <summary>
     /// Sends a payment request with the specified amount and terminal ID.
     /// </summary>
-    /// <param name="amount">The amount of the payment.</param>
     /// <param name="terminalId">The terminal ID.</param>
+    /// <param name="amount">The amount of the payment.</param>
+    /// <param name="showTips"></param>
     /// <param name="orderIdCallback">An optional callback function to be called with the generated order ID.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains the payment response object.</returns>
-    public async Task<PayResponse> SendPayment(decimal amount, string terminalId, Action<string>? orderIdCallback = null)
+    public async Task<PayResponse> SendPayment(string terminalId, decimal amount, bool showTips = false, Action<string>? orderIdCallback = null)
     {
         var req = new PayRequest { StoreId = _store, Amount = amount.ToString("F2"), TerminalId = terminalId };
         using var pay = _client.Pay(req, deadline: DeadLine(), headers: ApiKey());

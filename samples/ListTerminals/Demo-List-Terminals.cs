@@ -1,27 +1,23 @@
 ﻿using System.Diagnostics;
-using System.Text.Json;
-using Com.Kodypay.Grpc.Pay.V1;
-using kp_bamboo_dotnet;
+using KodyCommons;
 
 namespace kody_dotnet_samples;
-
-public record KodySettings(string Address, string StoreId, string ApiKey);
 
 public class ExampleListTerminals
 {
     public static void Main()
     {
         // setup the configuration needed by the client
-        var settings = JsonSerializer.Deserialize<KodySettings> (File.ReadAllText("../../../appsettings.json"));
+        var settings = Utils.LoadSettings("appsettings.json");
         Debug.Assert(settings != null, $"{nameof(settings)} != null");
 
-        var example = new Example(settings)
+        var example = new ExampleListTerminals(settings);
         example.Terminals();
     }
 
     private readonly KodyPayTerminalClient _client;
 
-    private Example(KodySettings settings)
+    private ExampleListTerminals(KodySettings settings)
     {
         // the API Key and Store will be given to you when you start developing the integration.
         var store = Guid.Parse(settings.StoreId);
@@ -44,7 +40,7 @@ public class ExampleListTerminals
             Console.WriteLine($"TerminalId: {terminal.TerminalId}, Online: {terminal.Online}");
         }
 
-        _terminalId = terminals.First(t => t.Online).TerminalId;
+        var _terminalId = terminals.First(t => t.Online).TerminalId;
         Console.WriteLine($"Selected terminal: {_terminalId}");
     }
 }
