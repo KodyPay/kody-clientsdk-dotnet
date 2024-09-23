@@ -19,3 +19,6 @@ The client needs to be created with the following properties:
 `Demo-List-Terminals.cs` file contains code that reads the list of payment terminals assigned to the store.
 
 The `Demo-Terminal-Payment.cs` code initiates a payment on a specific terminal, and checks the payment details.
+
+## Demo
+https://github.com/user-attachments/assets/ac32b325-dd2b-4562-8ad7-f67c76c27309
