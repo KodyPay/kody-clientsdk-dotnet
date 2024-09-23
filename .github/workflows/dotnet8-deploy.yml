@@ -88,7 +88,7 @@ jobs:
           tag: ${{ needs.tagging.outputs.tag }}
           body: |
             ${{ github.event.release.body }}
-            Package available on https://nuget.pkg.github.com/KodyPay/index.json
+            Package available on https://www.nuget.org/packages/kody-dotnet8-client
           draft: false
           prerelease: ${{ github.ref != 'refs/heads/main' }}
           makeLatest: ${{ github.ref == 'refs/heads/main' }}
