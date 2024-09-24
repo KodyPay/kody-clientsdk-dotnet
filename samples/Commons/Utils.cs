@@ -4,10 +4,10 @@ using System.Text.Json;
 
 namespace KodyCommons;
 
-public class Utils
+public static class Utils
 {
     // Method to find a file in the current directory or its parent directories
-    public static string FindFileInDirectoryOrParents(string directory, string fileName)
+    public static string? FindFileInDirectoryOrParents(string directory, string fileName)
     {
         // Check if file exists in the current directory
         var filePath = Path.Combine(directory, fileName);
