@@ -58,11 +58,16 @@ jobs:
       - name: Checkout proto repository
         run: |
           git clone https://github.com/KodyPay/kp-protocols-clientsdk.git proto-repo
-          cd proto-repo || { echo "Failed to change directory to proto-repo"; exit 1; }
-          if [ -n "${{ github.event.inputs.kp_tag }}" ]; then
-            git checkout tags/${{ github.event.inputs.kp_tag }} -b temp-branch || { echo "Failed to checkout tag ${{ github.event.inputs.kp_tag }}"; exit 1; }
-          fi
+          cd proto-repo
+          if ($env:GITHUB_EVENT_INPUTS_KP_TAG) {
+            git checkout tags/$env:GITHUB_EVENT_INPUTS_KP_TAG -b temp-branch
+            if ($LASTEXITCODE -ne 0) {
+              Write-Error "Failed to checkout tag $env:GITHUB_EVENT_INPUTS_KP_TAG"
+              exit 1
+            }
+          }
           cd ..
+        shell: pwsh
 
       - name: Setup dotnet
         uses: actions/setup-dotnet@v3
