@@ -18,6 +18,8 @@
 
     <ItemGroup>
         <Protobuf Include="../proto-repo/src/main/proto/com/kodypay/grpc/pay/v1/pay.proto" GrpcServices="Client" />
+        <Protobuf Include="../proto-repo/src/main/proto/com/kodypay/grpc/ordering/v1/inventory.proto" GrpcServices="Client" />
+        <Protobuf Include="../proto-repo/src/main/proto/com/kodypay/grpc/ordering/v1/order.proto" GrpcServices="Client" />
     </ItemGroup>
 
     <ItemGroup>
