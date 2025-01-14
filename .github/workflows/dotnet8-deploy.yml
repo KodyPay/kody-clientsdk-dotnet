@@ -58,6 +58,11 @@ jobs:
       - name: Checkout proto repository
         run: |
           git clone https://github.com/KodyPay/kp-protocols-clientsdk.git proto-repo
+          cd proto-repo
+          if [ -n "${{ github.event.inputs.kp_tag }}" ]; then
+            git checkout tags/${{ github.event.inputs.kp_tag }} -b temp-branch
+          fi
+          cd ..
 
       - name: Setup dotnet
         uses: actions/setup-dotnet@v3
