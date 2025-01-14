@@ -1,6 +1,11 @@
 name: .NET8 Build and Release
 on:
   workflow_dispatch:
+    inputs:
+      kp_tag:
+        description: 'Optional tag for kp-protocols-clientsdk'
+        required: false
+        default: ''
 
 jobs:
   tagging:
@@ -10,21 +15,27 @@ jobs:
       version: ${{ steps.tag.outputs.version }}
       prerelease: ${{ steps.tag.outputs.prerelease }}
     steps:
-      - name: Fetch head tag from kp-protocols-clientsdk
+      - name: Fetch version tag from kp-protocols-clientsdk
         id: tag
         run: |
-          git clone --branch main https://github.com/KodyPay/kp-protocols-clientsdk.git proto-repo
-          cd proto-repo
-          head_tag=$(git describe --tags --exact-match HEAD 2>/dev/null || echo "")
-          if [[ -z "${head_tag}" ]]; then
+          if [ -n "${{ github.event.inputs.kp_tag }}" ]; then
+            git clone https://github.com/KodyPay/kp-protocols-clientsdk.git proto-repo
+            cd proto-repo
+            git checkout tags/${{ github.event.inputs.kp_tag }} -b temp-branch
+            version_tag=${{ github.event.inputs.kp_tag }}
+          else
+            git clone --branch main https://github.com/KodyPay/kp-protocols-clientsdk.git proto-repo
+            cd proto-repo
+            version_tag=$(git describe --tags --exact-match HEAD 2>/dev/null || echo "")
+          fi
+          if [[ -z "${version_tag}" ]]; then
             echo "No tag found on the head commit of kp-protocols-clientsdk repo. Failing the action."
             exit 1
           else
-            echo "tag=${head_tag}" >> $GITHUB_OUTPUT
-            echo "version=${head_tag#v}" >> $GITHUB_OUTPUT
-            if [[ "${head_tag}" == *-* ]]; then echo "prerelease=true" >> $GITHUB_OUTPUT; else echo "prerelease=false" >> $GITHUB_OUTPUT; fi
+            echo "tag=${version_tag}" >> $GITHUB_OUTPUT
+            echo "version=${version_tag#v}" >> $GITHUB_OUTPUT
+            if [[ "${version_tag}" == *-* ]]; then echo "prerelease=true" >> $GITHUB_OUTPUT; else echo "prerelease=false" >> $GITHUB_OUTPUT; fi
           fi
-
   tagging-echo:
     needs:
       - tagging
