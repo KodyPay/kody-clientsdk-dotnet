@@ -20,8 +20,8 @@ jobs:
         run: |
           if [ -n "${{ github.event.inputs.kp_tag }}" ]; then
             git clone https://github.com/KodyPay/kp-protocols-clientsdk.git proto-repo
-            cd proto-repo
-            git checkout tags/${{ github.event.inputs.kp_tag }} -b temp-branch
+            cd proto-repo || { echo "Failed to change directory to proto-repo"; exit 1; }
+            git checkout tags/${{ github.event.inputs.kp_tag }} -b temp-branch || { echo "Failed to checkout tag ${{ github.event.inputs.kp_tag }}"; exit 1; }
             version_tag=${{ github.event.inputs.kp_tag }}
           else
             git clone --branch main https://github.com/KodyPay/kp-protocols-clientsdk.git proto-repo
@@ -58,9 +58,9 @@ jobs:
       - name: Checkout proto repository
         run: |
           git clone https://github.com/KodyPay/kp-protocols-clientsdk.git proto-repo
-          cd proto-repo
+          cd proto-repo || { echo "Failed to change directory to proto-repo"; exit 1; }
           if [ -n "${{ github.event.inputs.kp_tag }}" ]; then
-            git checkout tags/${{ github.event.inputs.kp_tag }} -b temp-branch
+            git checkout tags/${{ github.event.inputs.kp_tag }} -b temp-branch || { echo "Failed to checkout tag ${{ github.event.inputs.kp_tag }}"; exit 1; }
           fi
           cd ..
 
