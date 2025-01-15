@@ -69,6 +69,8 @@ jobs:
             Write-Output "Environment variable GITHUB_EVENT_INPUTS_KP_TAG does not have a value."
           }
           cd ..
+        env:
+          GITHUB_EVENT_INPUTS_KP_TAG: ${{ github.event.inputs.kp_tag }}
 
       - name: Setup dotnet
         uses: actions/setup-dotnet@v3
