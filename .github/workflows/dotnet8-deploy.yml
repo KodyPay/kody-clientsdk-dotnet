@@ -65,9 +65,10 @@ jobs:
               Write-Error "Failed to checkout tag $env:GITHUB_EVENT_INPUTS_KP_TAG"
               exit 1
             }
+          } else {
+            Write-Output "Environment variable GITHUB_EVENT_INPUTS_KP_TAG does not have a value."
           }
           cd ..
-        shell: pwsh
 
       - name: Setup dotnet
         uses: actions/setup-dotnet@v3
