@@ -15,13 +15,10 @@ jobs:
       version: ${{ steps.tag.outputs.version }}
       prerelease: ${{ steps.tag.outputs.prerelease }}
     steps:
-      - name: Fetch version tag from kp-protocols-clientsdk
+      - name: Determine version tag from kp-protocols-clientsdk
         id: tag
         run: |
           if [ -n "${{ github.event.inputs.kp_tag }}" ]; then
-            git clone https://github.com/KodyPay/kp-protocols-clientsdk.git proto-repo
-            cd proto-repo || { echo "Failed to change directory to proto-repo"; exit 1; }
-            git checkout tags/${{ github.event.inputs.kp_tag }} -b temp-branch || { echo "Failed to checkout tag ${{ github.event.inputs.kp_tag }}"; exit 1; }
             version_tag=${{ github.event.inputs.kp_tag }}
           else
             git clone --branch main https://github.com/KodyPay/kp-protocols-clientsdk.git proto-repo
