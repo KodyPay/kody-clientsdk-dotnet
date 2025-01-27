@@ -22,7 +22,7 @@ To install the Kody .NET gRPC Client, you can add it to your project's `.csproj`
   </PropertyGroup>
 
   <ItemGroup>
-      <PackageReference Include="kody-dotnet8-client" Version="1.4.23-alpha" />
+      <PackageReference Include="kody-dotnet8-client" Version="1.4.24-alpha" />
   </ItemGroup>
 
 </Project>
