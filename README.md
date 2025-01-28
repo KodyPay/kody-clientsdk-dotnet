@@ -112,7 +112,7 @@ class Program
         var request = new UpdateOrderStatusRequest {
             StoreId = "store123",
             OrderId = "order456",
-            NewStatus = OrderStatus.Completed
+            NewStatus = Enum.Parse<OrderStatus>(Status, true)
         };
 
         var response = client.UpdateOrderStatus(request, headers);
