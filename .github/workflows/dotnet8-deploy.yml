@@ -98,6 +98,7 @@ jobs:
       - name: Create Release
         uses: ncipollo/release-action@v1.14.0
         with:
+          token: ${{ secrets.GH_PUB_RELEASE }}
           name: ${{ needs.tagging.outputs.tag }}
           tag: ${{ needs.tagging.outputs.tag }}
           body: |
